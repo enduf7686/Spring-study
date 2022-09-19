@@ -1,36 +1,28 @@
 package hello.hellospring.service;
 
 import hello.hellospring.domain.Member;
-import hello.hellospring.repository.MemoryMemberRepository;
+import hello.hellospring.repository.MemberRepository;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-// 단위 테스트: 순수하게 자바 코드로만 최소한의 단위로 테스트 하는 것
-class MemberServiceTest {
+// 통합 테스트: Spring, DB 까지 연동하여 하는 테스트
+@SpringBootTest // 스프링 컨테이너와 테스트를 함께 실행한다.
+@Transactional // 테스트를 실행하고 끝나면 롤백해줘서 데이터베이스에 적용이 안되게 함
+public class MemberServiceIntegrationTest {
 
-    MemberService memberService;
-    MemoryMemberRepository memberRepository;
-
-    @BeforeEach
-    public void beforeEach() {
-        memberRepository = new MemoryMemberRepository();
-        memberService = new MemberService(memberRepository);
-    }
-
-    @AfterEach
-    public void afterEach() {
-        memberRepository.clearStore();
-    }
+    @Autowired MemberService memberService;
+    @Autowired MemberRepository memberRepository;
 
     @Test
     void 회원가입() {
         // given (어떠한 상황이 주어지면)
         Member member = new Member();
-        member.setName("hello");
+        member.setName("spring");
 
         // when (이걸 실행했을 때)
         Long saveId = memberService.join(member);
